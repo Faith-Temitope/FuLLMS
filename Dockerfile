@@ -19,9 +19,12 @@ RUN mkdir -p /var/www/moodledata \
     && chmod -R 02777 /var/www/moodledata
 
 # The base image can end up with more than one Apache MPM enabled at once
-# ("apache2: Configuration error: More than one MPM loaded"), which is fatal at startup.
-# This uses mod_php (not PHP-FPM), which requires the prefork MPM specifically.
-RUN a2dismod mpm_event mpm_worker 2>/dev/null; a2enmod mpm_prefork
+# ("apache2: Configuration error: More than one MPM loaded"), fatal at container startup.
+# A build-time a2dismod/a2enmod alone gets overridden by the base image's own later setup,
+# so the fix runs from its official /docker-entrypoint.d/ hook point instead, immediately
+# before Apache actually starts. See docker/entrypoint.d/05-fix-mpm.sh.
+COPY docker/entrypoint.d/05-fix-mpm.sh /docker-entrypoint.d/05-fix-mpm.sh
+RUN chmod +x /docker-entrypoint.d/05-fix-mpm.sh
 
 # NOTE: no Docker VOLUME instruction here - Railway (and most container platforms) rejects
 # it, since persistence is configured through their own volume system instead. On Railway:
