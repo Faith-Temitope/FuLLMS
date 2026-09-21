@@ -1,48 +1,46 @@
-# Moodle
+# FuLLMS
 
-<p align="center"><a href="https://moodle.org" target="_blank" title="Moodle Website">
-  <img src="https://raw.githubusercontent.com/moodle/moodle/main/.github/moodlelogo.svg" alt="The Moodle Logo">
-</a></p>
+A project on the implementation of LMS as an effective learning path for FUL and the Nigerian university sector as a whole.
 
-[Moodle][1] is the World's Open Source Learning Platform, widely used around the world by countless universities, schools, companies, and all manner of organisations and individuals.
+FuLLMS is an Integrated Learning Management System (ILMS) built for Federal University Lokoja as a final year project. It is built on top of [Moodle](https://moodle.org), extended with custom, accessibility-first features designed for FULokoja's course delivery and accessibility needs (see the project report, Chapters 1-3).
 
-Moodle is designed to allow educators, administrators and learners to create personalised learning environments with a single robust, secure and integrated system.
+## What's custom in this repository
 
-## Documentation
+The bulk of this codebase is the Moodle platform itself (unmodified core). The original work for this project lives in:
 
-- Read our [User documentation][3]
-- Discover our [developer documentation][5]
-- Take a look at our [demo site][4]
-
-## Community
-
-[moodle.org][1] is the central hub for the Moodle Community, with spaces for educators, administrators and developers to meet and work together.
-
-You may also be interested in:
-
-- attending a [Moodle Moot][6]
-- our regular series of [developer meetings][7]
-- the [Moodle User Association][8]
-
-## Installation and hosting
-
-Moodle is Free, and Open Source software. You can easily [download Moodle][9] and run it on your own web server, however you may prefer to work with one of our experienced [Moodle Partners][10].
-
-Moodle also offers hosting through both [MoodleCloud][11], and our [partner network][10].
+- **`mod/accessiblematerial/`** - the Accessibility Compliance Module. A Moodle activity type that lets lecturers upload course material and automatically checks it for accessibility compliance (captions on video, alternative text on images/documents) before publishing it to students.
+- **`local/fulokoja_lms/`** - a dashboard plugin summarising course, user and assignment activity.
 
 ## License
 
-Moodle is provided freely as open source software, under version 3 of the GNU General Public License. See our [license page][12] for more information.
+This project is built on Moodle, which is free software distributed under the **GNU General Public License v3** - see [`COPYING.txt`](COPYING.txt). The custom components listed above (`mod/accessiblematerial`, `local/fulokoja_lms`) were written for this project by Faith Temitope (2026) and are also released under GPLv3, for compatibility with the platform they extend.
 
-[1]: https://moodle.org
-[2]: https://moodle.com
-[3]: https://docs.moodle.org/
-[4]: https://sandbox.moodledemo.net/
-[5]: https://moodledev.io
-[6]: https://moodle.com/events/mootglobal/
-[7]: https://moodledev.io/general/community/meetings
-[8]: https://moodleassociation.org/
-[9]: https://download.moodle.org
-[10]: https://moodle.com/partners
-[11]: https://moodle.com/cloud
-[12]: https://moodledev.io/general/license
+"Moodle" is a registered trademark of Moodle Pty Ltd; this project describes its own implementation built on the Moodle platform, which is an explicitly permitted use under [Moodle's trademark policy](TRADEMARK.txt).
+
+## Getting started (local development)
+
+This project is set up to run under [XAMPP](https://www.apachefriends.org/) on Windows (Apache + MariaDB + PHP).
+
+1. **Install XAMPP** and clone/copy this repository into `C:\xampp\htdocs\moodle` (or your XAMPP `htdocs` folder).
+2. **Start Apache and MariaDB** from the XAMPP Control Panel (or `apache_start.bat` / `mysql_start.bat` in the XAMPP folder).
+3. **Create the database.** Open `http://localhost/phpmyadmin` and create a database named `moodle` (utf8mb4_unicode_ci collation).
+4. **Configure `config.php`** in the repository root with your database name/user/password and `$CFG->wwwroot` (e.g. `http://localhost/moodle`). A `config-dist.php` template is provided if you need to recreate it.
+5. **Run the installer/upgrader** from a terminal in the repository root:
+   ```
+   C:\xampp\php\php.exe admin\cli\upgrade.php --non-interactive
+   ```
+   (For a brand-new database instead of an existing one, run `admin\cli\install_database.php` first - see `admin/cli/install.php --help`.)
+6. **Log in** at `http://localhost/moodle` with your Moodle admin account.
+7. To add course material with accessibility checking, open a course, turn editing on, and **Add an activity > Accessible Material**.
+
+### Running checks / tests from the command line
+
+```
+C:\xampp\php\php.exe admin\cli\checks.php
+```
+
+## Original Moodle documentation
+
+- [User documentation](https://docs.moodle.org/)
+- [Developer documentation](https://moodledev.io)
+- [moodle.org](https://moodle.org) - the central hub for the Moodle community
