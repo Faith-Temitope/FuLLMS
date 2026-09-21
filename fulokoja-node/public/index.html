@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FULokoja Learning Management System</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="login-view" class="login-shell">
+      <main class="login-card" aria-labelledby="login-title">
+        <div class="brand-mark" aria-hidden="true">F</div>
+        <p class="eyebrow">Federal University Lokoja</p>
+        <h1 id="login-title">Learning Management System</h1>
+        <p class="muted">Sign in to continue to your courses.</p>
+        <form id="login-form" class="stack-form">
+          <label for="email">University email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            required
+          />
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+          <button class="btn btn-primary" type="submit">Log in</button>
+          <p id="login-error" class="form-error" role="alert" hidden></p>
+        </form>
+      </main>
+    </div>
+
+    <div id="app-view" hidden>
+      <header class="navbar" role="banner">
+        <button
+          id="drawer-toggle"
+          class="icon-button"
+          type="button"
+          aria-controls="course-drawer"
+          aria-expanded="true"
+          title="Toggle navigation"
+        >
+          &#9776;
+        </button>
+        <a class="navbar-brand" href="#dashboard">FULokoja LMS</a>
+        <nav class="top-nav" aria-label="Primary navigation">
+          <a class="active" href="#dashboard">Dashboard</a>
+          <a href="#courses">My courses</a>
+          <a href="#messages" id="messages-link"
+            >Messages
+            <span id="unread-count" class="unread-badge" hidden>0</span></a
+          >
+          <a href="#accessibility" id="accessibility-link">Accessibility</a>
+          <a href="#user-management" id="user-management-link" hidden
+            >User management</a
+          >
+          <a href="#course-management" id="course-management-link" hidden
+            >Course management</a
+          >
+        </nav>
+        <div class="navbar-tools">
+          <span id="user-role" class="role-label"></span>
+          <button id="logout-button" class="btn btn-link" type="button">
+            Log out
+          </button>
+        </div>
+      </header>
+
+      <div class="app-layout">
+        <aside
+          id="course-drawer"
+          class="course-drawer"
+          aria-label="Course navigation"
+        >
+          <div class="drawer-heading">
+            <span class="drawer-title">Course navigation</span>
+            <button
+              id="drawer-close"
+              class="icon-button"
+              type="button"
+              title="Close navigation"
+            >
+              &times;
+            </button>
+          </div>
+          <a class="drawer-link active" href="#dashboard">Dashboard</a>
+          <div id="course-section-label" class="drawer-section-label">
+            My courses
+          </div>
+          <div id="course-list" class="course-list">
+            <p class="muted drawer-empty">Loading courses...</p>
+          </div>
+        </aside>
+
+        <main id="page" class="main-inner" tabindex="-1">
+          <div class="breadcrumb">
+            <a href="#dashboard">Home</a><span aria-hidden="true">/</span
+            ><span id="breadcrumb-current">Dashboard</span>
+          </div>
+          <section
+            id="dashboard-panel"
+            class="page-panel"
+            aria-labelledby="page-title"
+          >
+            <div class="page-heading">
+              <div>
+                <p id="page-eyebrow" class="eyebrow">Learner home</p>
+                <h1 id="page-title">Dashboard</h1>
+              </div>
+              <div id="session-user" class="user-summary"></div>
+            </div>
+            <div id="dashboard-content" class="dashboard-grid">
+              <section class="card welcome-card">
+                <p class="eyebrow">Today</p>
+                <h2 id="welcome-heading">Keep your learning moving.</h2>
+                <p id="welcome-copy" class="muted">
+                  Choose a course from the navigation drawer to view its
+                  materials, announcements, and assignments.
+                </p>
+              </section>
+              <section class="card stat-card">
+                <span class="stat-number" id="course-count">0</span
+                ><span class="stat-label">Courses</span>
+              </section>
+              <section class="card stat-card">
+                <span class="stat-number" id="assignment-count">0</span
+                ><span class="stat-label">Assignments</span>
+              </section>
+              <section class="card activity-card">
+                <h2>Recent activity</h2>
+                <div id="recent-activity" class="activity-list">
+                  <p class="muted">Your course activity will appear here.</p>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section
+            id="course-panel"
+            class="page-panel"
+            hidden
+            aria-labelledby="course-title"
+          >
+            <div class="page-heading course-heading">
+              <div>
+                <p id="course-code" class="eyebrow"></p>
+                <h1 id="course-title">Course</h1>
+                <p id="course-description" class="muted"></p>
+              </div>
+              <button
+                id="back-dashboard"
+                class="btn btn-secondary"
+                type="button"
+              >
+                Back to dashboard
+              </button>
+            </div>
+            <nav class="secondary-nav" aria-label="Course sections">
+              <button
+                class="secondary-tab active"
+                data-tab="overview"
+                type="button"
+              >
+                Course
+              </button>
+              <button class="secondary-tab" data-tab="materials" type="button">
+                Materials
+              </button>
+              <button
+                class="secondary-tab"
+                data-tab="assignments"
+                type="button"
+              >
+                Assignments
+              </button>
+              <button class="secondary-tab" data-tab="forums" type="button">
+                Forums
+              </button>
+              <button class="secondary-tab" data-tab="quizzes" type="button">
+                Quizzes
+              </button>
+              <button class="secondary-tab" data-tab="grades" type="button">
+                Grades
+              </button>
+              <button
+                class="secondary-tab"
+                data-tab="announcements"
+                type="button"
+              >
+                Announcements
+              </button>
+            </nav>
+            <div id="course-content" class="course-content"></div>
+          </section>
+
+          <section
+            id="messages-panel"
+            class="page-panel"
+            hidden
+            aria-labelledby="messages-title"
+          >
+            <div class="page-heading">
+              <div>
+                <p class="eyebrow">Communication</p>
+                <h1 id="messages-title">Messages</h1>
+              </div>
+              <button
+                id="messages-refresh"
+                class="btn btn-secondary"
+                type="button"
+              >
+                Refresh
+              </button>
+            </div>
+            <div class="messages-layout">
+              <section class="card messages-inbox">
+                <h2>Inbox</h2>
+                <div id="message-list" class="message-list">
+                  <p class="muted">Loading messages...</p>
+                </div>
+              </section>
+              <section class="card message-compose">
+                <h2>New message</h2>
+                <form id="message-form" class="stack-form">
+                  <label for="message-recipient">To</label
+                  ><select id="message-recipient" required>
+                    <option value="">Choose a contact</option></select
+                  ><label for="message-body">Message</label
+                  ><textarea
+                    id="message-body"
+                    rows="7"
+                    maxlength="10000"
+                    required
+                  ></textarea
+                  ><button class="btn btn-primary" type="submit">
+                    Send message
+                  </button>
+                </form>
+              </section>
+            </div>
+          </section>
+
+          <section
+            id="accessibility-panel"
+            class="page-panel"
+            hidden
+            aria-labelledby="accessibility-title"
+          >
+            <div class="page-heading">
+              <div>
+                <p class="eyebrow">Inclusive learning</p>
+                <h1 id="accessibility-title">Accessibility settings</h1>
+              </div>
+            </div>
+            <section class="card accessibility-card">
+              <form id="accessibility-form" class="stack-form">
+                <label for="text-size">Text size</label>
+                <select id="text-size">
+                  <option value="normal">Normal</option>
+                  <option value="large">Large</option>
+                  <option value="extra-large">Extra large</option>
+                </select>
+                <label class="toggle-row"
+                  ><input id="high-contrast" type="checkbox" /> High
+                  contrast</label
+                >
+                <label class="toggle-row"
+                  ><input id="captions-preferred" type="checkbox" /> Prefer
+                  captions for video content</label
+                >
+                <button class="btn btn-primary" type="submit">
+                  Save accessibility settings
+                </button>
+                <p id="accessibility-status" class="muted" role="status"></p>
+              </form>
+            </section>
+          </section>
+
+          <section
+            id="user-management-panel"
+            class="page-panel"
+            hidden
+            aria-labelledby="user-management-title"
+          >
+            <div class="page-heading">
+              <div>
+                <p class="eyebrow">Institutional administration</p>
+                <h1 id="user-management-title">User management</h1>
+              </div>
+              <button
+                id="users-refresh"
+                class="btn btn-secondary"
+                type="button"
+              >
+                Refresh
+              </button>
+            </div>
+            <section class="card">
+              <h2>Create institutional user</h2>
+              <form id="user-create-form" class="stack-form">
+                <label for="user-email-input">Email</label>
+                <input
+                  id="user-email-input"
+                  name="email"
+                  type="email"
+                  required
+                />
+                <label for="user-password-input">Password</label>
+                <input
+                  id="user-password-input"
+                  name="password"
+                  type="password"
+                  minlength="8"
+                  required
+                />
+                <label for="user-display-name-input">Display name</label>
+                <input
+                  id="user-display-name-input"
+                  name="displayName"
+                  required
+                  maxlength="120"
+                />
+                <label for="user-matric-number-input">Matric number</label>
+                <input
+                  id="user-matric-number-input"
+                  name="matricNumber"
+                  maxlength="40"
+                />
+                <label for="user-role-input">Role</label>
+                <select id="user-role-input" name="role" required>
+                  <option value="student">Student</option>
+                  <option value="lecturer">Lecturer</option>
+                  <option value="administrator">Administrator</option>
+                </select>
+                <button class="btn btn-primary" type="submit">
+                  Create user
+                </button>
+                <p id="user-create-status" class="muted" role="status"></p>
+              </form>
+            </section>
+            <section class="card">
+              <div id="user-list" class="user-list">
+                <p class="muted">Loading users...</p>
+              </div>
+            </section>
+          </section>
+
+          <section
+            id="course-management-panel"
+            class="page-panel"
+            hidden
+            aria-labelledby="course-management-title"
+          >
+            <div class="page-heading">
+              <div>
+                <p class="eyebrow">Institutional administration</p>
+                <h1 id="course-management-title">Course management</h1>
+              </div>
+              <button
+                id="courses-refresh"
+                class="btn btn-secondary"
+                type="button"
+              >
+                Refresh
+              </button>
+            </div>
+            <div class="admin-grid">
+              <section class="card">
+                <h2>Create course</h2>
+                <form id="course-form" class="stack-form">
+                  <label for="course-code-input">Course code</label>
+                  <input
+                    id="course-code-input"
+                    required
+                    maxlength="30"
+                    placeholder="CSC 101"
+                  />
+                  <label for="course-title-input">Course title</label>
+                  <input
+                    id="course-title-input"
+                    required
+                    maxlength="200"
+                    placeholder="Introduction to Computing"
+                  />
+                  <label for="course-department-input">Department</label>
+                  <input
+                    id="course-department-input"
+                    required
+                    maxlength="160"
+                    placeholder="Computer Science"
+                  />
+                  <label for="course-lecturer-input">Lecturer</label>
+                  <select id="course-lecturer-input" required>
+                    <option value="">Choose lecturer</option>
+                  </select>
+                  <label for="course-description-input">Description</label>
+                  <textarea
+                    id="course-description-input"
+                    rows="4"
+                    maxlength="5000"
+                  ></textarea>
+                  <label class="toggle-row"
+                    ><input id="course-published-input" type="checkbox" />
+                    Publish course</label
+                  >
+                  <button class="btn btn-primary" type="submit">
+                    Create course
+                  </button>
+                  <p id="course-status" class="muted" role="status"></p>
+                </form>
+              </section>
+              <section class="card">
+                <h2>Courses</h2>
+                <div id="admin-course-list" class="user-list">
+                  <p class="muted">Loading courses...</p>
+                </div>
+              </section>
+            </div>
+            <section class="card enrolment-admin-card">
+              <h2>Assign student to course</h2>
+              <form id="enrolment-form" class="admin-form-row">
+                <label for="enrolment-course-input"
+                  >Course<select id="enrolment-course-input" required>
+                    <option value="">Choose course</option>
+                  </select></label
+                >
+                <label for="enrolment-student-input"
+                  >Student<select id="enrolment-student-input" required>
+                    <option value="">Choose student</option>
+                  </select></label
+                >
+                <label for="enrolment-start-input"
+                  >Start date<input
+                    id="enrolment-start-input"
+                    type="date"
+                    required
+                /></label>
+                <label for="enrolment-end-input"
+                  >End date<input id="enrolment-end-input" type="date" required
+                /></label>
+                <button class="btn btn-primary" type="submit">
+                  Assign student
+                </button>
+              </form>
+              <p id="enrolment-status" class="muted" role="status"></p>
+              <div id="enrolment-list" class="user-list">
+                <p class="muted">Choose a course to view enrolments.</p>
+              </div>
+            </section>
+          </section>
+          <p id="app-error" class="form-error" role="alert" hidden></p>
+        </main>
+      </div>
+    </div>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
