@@ -18,5 +18,7 @@ RUN mkdir -p /var/www/moodledata \
     && chown -R www-data:www-data /var/www/moodledata /var/www/html \
     && chmod -R 02777 /var/www/moodledata
 
-# Persisted across deploys/restarts - uploaded files, caches, sessions.
-VOLUME ["/var/www/moodledata"]
+# NOTE: no Docker VOLUME instruction here - Railway (and most container platforms) rejects
+# it, since persistence is configured through their own volume system instead. On Railway:
+# service Settings > Volumes > New Volume, mounted at /var/www/moodledata. Without this,
+# uploaded files are lost on every redeploy.
