@@ -35,3 +35,17 @@ $string['feature2'] = 'Lecturer course management and assessment support.';
 $string['feature3'] = 'Administrator reporting and academic overview.';
 $string['feature4'] = 'Accessibility-first design using Moodle and WCAG-informed practice.';
 $string['view'] = 'View FULokoja LMS Dashboard';
+
+$string['accessibilitysettings'] = 'Accessibility settings';
+$string['accessibilitysettings_intro'] = 'These settings apply across the whole site for your account, on any device.';
+$string['preferencessaved'] = 'Your accessibility preferences have been saved.';
+$string['screenreadermode'] = 'Screen reader optimised mode';
+$string['screenreadermode_help'] = 'Strengthens keyboard focus indicators, always shows skip links, and removes animations that can be disorientating with a screen reader.';
+$string['textsize'] = 'Text size';
+$string['textsize_default'] = 'Default';
+$string['textsize_large'] = 'Large';
+$string['textsize_extralarge'] = 'Extra large';
+$string['highcontrast'] = 'High contrast mode';
+$string['highcontrast_help'] = 'Displays the site in a black background with white text and bright yellow links, for maximum contrast.';
+$string['showcaptions'] = 'Show video captions by default';
+$string['showcaptions_help'] = 'When a video has a caption file attached, captions will be switched on automatically when you open it.';

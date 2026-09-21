@@ -102,6 +102,11 @@ echo $OUTPUT->header();
 </style>
 
 <div class="fulokoja-dashboard">
+    <div style="text-align:right;">
+        <a class="btn btn-secondary" href="<?php echo (new moodle_url('/local/fulokoja_lms/preferences.php'))->out(); ?>">
+            <?php echo get_string('accessibilitysettings', 'local_fulokoja_lms'); ?>
+        </a>
+    </div>
     <h2><?php echo get_string('overview', 'local_fulokoja_lms'); ?></h2>
 
     <div class="fulokoja-grid">

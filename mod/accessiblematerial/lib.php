@@ -185,6 +185,17 @@ function accessiblematerial_notify_enrolled_students(stdClass $material, context
 }
 
 /**
+ * Whether captions should be enabled by default when a user opens a video, per their saved
+ * AccessibilityPreferences (FR7). Defaults to true if local_fulokoja_lms isn't installed.
+ */
+function accessiblematerial_should_show_captions_by_default(int $userid): bool {
+    if (!class_exists(\local_fulokoja_lms\accessibility_prefs::class)) {
+        return true;
+    }
+    return (bool) \local_fulokoja_lms\accessibility_prefs::get_for_user($userid)->showcaptions;
+}
+
+/**
  * Add accessiblematerial instance.
  *
  * @param stdClass $data

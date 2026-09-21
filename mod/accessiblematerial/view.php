@@ -87,13 +87,16 @@ if ($mainfile) {
             $captionurl = moodle_url::make_pluginfile_url(
                 $context->id, 'mod_accessiblematerial', 'captions', 0, $captionfile->get_filepath(), $captionfile->get_filename()
             );
-            $captionsattr = html_writer::empty_tag('track', [
+            $trackattrs = [
                 'kind' => 'captions',
                 'src' => $captionurl->out(),
                 'srclang' => 'en',
                 'label' => get_string('captionfile', 'mod_accessiblematerial'),
-                'default' => 'default',
-            ]);
+            ];
+            if (accessiblematerial_should_show_captions_by_default($USER->id)) {
+                $trackattrs['default'] = 'default';
+            }
+            $captionsattr = html_writer::empty_tag('track', $trackattrs);
         }
         echo html_writer::tag('video', $captionsattr, [
             'src' => $fileurl->out(),

@@ -1,0 +1,82 @@
+/* FULokoja ILMS accessibility preferences (FR6, FR7). Classes are applied to <html> by
+   local_fulokoja_lms\hook_callbacks::before_html_attributes based on the signed-in user's
+   saved AccessibilityPreferences (Section 3.2.6). */
+
+.fulokoja-a11y-quicklink {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 10000;
+    background: #01351e;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fulokoja-a11y-quicklink:hover,
+.fulokoja-a11y-quicklink:focus {
+    background: #015a33;
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Text size */
+html.fulokoja-a11y-text-large body {
+    font-size: 120%;
+}
+
+html.fulokoja-a11y-text-extralarge body {
+    font-size: 145%;
+}
+
+/* High contrast: black background, white text, bright yellow links/focus for maximum contrast. */
+html.fulokoja-a11y-highcontrast body {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+html.fulokoja-a11y-highcontrast a {
+    color: #ffff00 !important;
+}
+
+html.fulokoja-a11y-highcontrast .card,
+html.fulokoja-a11y-highcontrast .generalbox,
+html.fulokoja-a11y-highcontrast .box,
+html.fulokoja-a11y-highcontrast .navbar,
+html.fulokoja-a11y-highcontrast [class*="bg-"] {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+html.fulokoja-a11y-highcontrast .btn-primary {
+    background-color: #ffff00 !important;
+    border-color: #ffff00 !important;
+    color: #000000 !important;
+}
+
+/* Screen-reader-optimised mode: stronger focus outlines, no motion, always-visible skip link. */
+html.fulokoja-a11y-screenreader *:focus {
+    outline: 3px solid #ffbf00 !important;
+    outline-offset: 2px !important;
+}
+
+html.fulokoja-a11y-screenreader *,
+html.fulokoja-a11y-screenreader *::before,
+html.fulokoja-a11y-screenreader *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+}
+
+html.fulokoja-a11y-screenreader .sr-only.sa-skip-link,
+html.fulokoja-a11y-screenreader a.skip-link {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip: auto !important;
+}
