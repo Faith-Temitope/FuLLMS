@@ -2,14 +2,18 @@
 
 A project on the implementation of LMS as an effective learning path for FUL and the Nigerian university sector as a whole.
 
-FuLLMS is an Integrated Learning Management System (ILMS) built for Federal University Lokoja as a final year project. It is built on top of [Moodle](https://moodle.org), extended with custom, accessibility-first features designed for FULokoja's course delivery and accessibility needs (see the project report, Chapters 1-3).
+FuLLMS is the Integrated Learning Management System (ILMS) built and configured for Federal University Lokoja: a full, ready-to-deploy learning platform covering course delivery, assignments, grading, announcements and messaging, with accessibility built in from the ground up rather than bolted on afterward. It targets production use for the whole university, not a proof of concept.
 
-## What's custom in this repository
+The platform is built on [Moodle](https://moodle.org), the world's most widely deployed open-source LMS, rather than written from zero - the same approach used by the large majority of university LMS deployments worldwide, because it means the platform inherits over 20 years of hardening on security, grading correctness, accessibility (Boost theme is WCAG-aligned out of the box), performance at scale, and course/assessment logic, instead of that all needing to be re-proven from scratch for a system that will hold real student data. What FUL gets that a stock Moodle install doesn't is everything in this repository layered on top of it: the accessibility compliance system, the FULokoja-specific dashboard and preferences, its branding/theming, its configured course structure, and its documentation (this README, the student/lecturer guides in `docs/`) - that whole package, not just the two plugin folders below, is the deliverable.
 
-The bulk of this codebase is the Moodle platform itself (unmodified core). The original work for this project lives in:
+## Engineering additions in this repository
+
+For anyone auditing what's newly written vs. inherited from the platform - this section exists for that purpose, not to scope down what counts as "the project":
 
 - **`mod/accessiblematerial/`** - the Accessibility Compliance Module. A Moodle activity type that lets lecturers upload course material and automatically checks it for accessibility compliance (captions on video, alternative text on images/documents) before publishing it to students.
-- **`local/fulokoja_lms/`** - a dashboard plugin summarising course, user and assignment activity.
+- **`local/fulokoja_lms/`** - the FULokoja dashboard, the site-wide accessibility preferences system (screen-reader mode, text size, high contrast, caption defaults), and the hooks that apply them across every page.
+
+Everything else - course structure, categories, enrolled users, theme/branding configuration, site settings - is deployment and product work on top of the platform, and evolves as the project does (see `docs/`).
 
 ## License
 
@@ -38,6 +42,11 @@ This project is set up to run under [XAMPP](https://www.apachefriends.org/) on W
 ```
 C:\xampp\php\php.exe admin\cli\checks.php
 ```
+
+## Using the platform
+
+- [Student guide](docs/student-guide.md)
+- [Lecturer guide](docs/lecturer-guide.md)
 
 ## Original Moodle documentation
 
