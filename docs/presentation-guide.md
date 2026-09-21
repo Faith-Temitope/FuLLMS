@@ -16,6 +16,44 @@ That's the entire startup procedure. If the page won't load, Apache or MySQL isn
 
 **A scheduled task now runs Moodle's background jobs (cron) automatically every minute** (see section 5) as long as this Windows account is logged in. You don't need to do anything for it.
 
+## 1a. Login details
+
+**Important**: your own real matric number is NOT a seeded account - none of the generated students use real FUL matric numbers, only the same *format* (`sci22csc074`-style). Use the exact usernames below, not your own number.
+
+**Your admin account** (the password was reset because the original wasn't known - this is your own account, now with a password on record):
+
+| Username | Password | Role |
+|---|---|---|
+| `faithtemitope` | `FulAdmin2026!` | Site Administrator (full control) |
+
+**Admin-dashboard accounts** (Manager role - see `docs/demo-accounts.md` for why these aren't raw Site Administrators):
+
+| Username | Password |
+|---|---|
+| `admin.chioma` | `FulLms2026!` |
+| `admin.abdullahi` | `FulLms2026!` |
+| `admin.halima` | `FulLms2026!` |
+
+**One ready-to-use student + lecturer per course** (all passwords `FulLms2026!`):
+
+| Course | Student username | Lecturer username |
+|---|---|---|
+| CSC101 | `sci25csc001` | `halima.adewale` |
+| CYB101 | `sci25cyb001` | `ayodele.usman` |
+| IFT101 | `sci25ift001` | `kemi.adeyemi` |
+| SEN101 | `sci25sen001` | `amina.yakubu` |
+| BIO101 | `sci25bio001` | `halima.afolabi` |
+| MCB101 | `sci25mcb001` | `bukola.adeyemi` |
+| BCH101 | `sci25bch001` | `aliyu.nwosu` |
+| CHM101 | `sci25chm001` | `hauwa.lawal` |
+| PHY101 | `sci25phy001` | `grace.suleiman` |
+| MTH101 | `sci25mth001` | `sani.nwosu` |
+| STA101 | `sci25sta001` | `chidinma.sadiq` |
+| EDU101 | `edu25edf001` | `damilola.suleiman` |
+| SED101 | `edu25sed001` | `musa.adewale` |
+
+For the full list of all 133 accounts, use the SQL query in section 2 below, or `docs/demo-accounts.md`.
+
 ## 2. Querying the database yourself
 
 You don't need me for this. Two ways:
@@ -118,7 +156,7 @@ This matches what your project report (Chapter 3) already states, plus the concr
 
 ## 8. How the 100 students / 30 lecturers / 13 courses were actually created
 
-Not by hand - by two PHP scripts checked into the project (`local/fulokoja_lms/cli/seed_demo_data.php` and `seed_full_semester.php`), run from the command line:
+Not by hand - by a PHP script checked into the project (`local/fulokoja_lms/cli/seed_full_semester.php`), run from the command line:
 ```
 C:\xampp\php\php.exe local\fulokoja_lms\cli\seed_full_semester.php
 ```

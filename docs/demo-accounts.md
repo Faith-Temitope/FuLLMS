@@ -28,7 +28,7 @@ This is placeholder data for testing and presentations, seeded on top of the rea
 | EDU101 | Foundations of Education | Educational Foundations |
 | SED101 | Introduction to Science Education | Science Education |
 
-Term dates: **24 August - 11 December 2026**. CSC201, CSC301, CSC401, and LIFSCI101 also exist from earlier testing but were not built out to full 8-week depth.
+Term dates: **24 August - 11 December 2026**.
 
 **Honesty about the quiz content**: each subject has a small reused pool of 5 real, correct multiple-choice questions (not one unique question per week - authoring ~450 unique questions wasn't feasible in the time available). The weekly practice quiz draws 2 rotating questions from the pool; the Section Exam and Final Exam both draw the full 5-question pool. This is enough to demonstrate the real, working quiz/exam mechanism (timed, one-question-per-page, auto-graded) - it is not a substitute for a lecturer building their actual question bank.
 
@@ -48,24 +48,23 @@ Query the database for the full list at any time, e.g.:
 SELECT username, firstname, lastname, email FROM mdl_user WHERE username REGEXP '^(sci|edu)[0-9]{2}' ORDER BY username;
 ```
 
-Your own account remains the top-level Site Administrator.
+Your own account (`faithtemitope`) remains the top-level Site Administrator - see `docs/presentation-guide.md` section 1a for its password, which was reset since the original wasn't known.
 
 ### Why "admin" accounts use the Manager role, not raw Site Administrator
 
 Adding accounts to Moodle's `$CFG->siteadmins` grants **unrestricted superuser access that bypasses every permission check** - it's the highest-risk privilege in the system, and not something that should be granted by an unattended script. The 3 admin-role accounts instead have the system **Manager** role, which gives full practical admin-dashboard access (user management, course management, reports, the accessibility compliance report) through Moodle's normal, auditable, revocable role/capability system. If you want one of them to become a true Site Administrator, do it explicitly and deliberately via **Site administration > Users > Permissions > Site administrators**.
 
-Earlier, smaller demo accounts (`demo.lecturer1/2`, `demo.student1-4`, `a11ytestuser`) from initial testing still exist alongside this larger dataset - harmless, just extra.
+The smaller original demo accounts (`demo.lecturer1/2`, `demo.student1-4`) and their placeholder courses (CSC201, CSC301, CSC401, LIFSCI101) from initial testing have been removed now that this larger dataset supersedes them. `a11ytestuser` remains - it's a distinct-purpose account exercising the Accessibility Compliance Module's specific pass/flag test cases in the A11YTEST course, not part of the general demo roster.
 
 ## Reproducing this data
 
-This is created by version-controlled, idempotent scripts, not by hand, so it's reproducible on any install (including a real deployment):
+This is created by a version-controlled, idempotent script, not by hand, so it's reproducible on any install (including a real deployment):
 
 ```
-C:\xampp\php\php.exe local\fulokoja_lms\cli\seed_demo_data.php
 C:\xampp\php\php.exe local\fulokoja_lms\cli\seed_full_semester.php
 ```
 
-Both are safe to re-run - every step checks whether the data already exists before creating it.
+It's safe to re-run - every step checks whether the data already exists before creating it. (An earlier, smaller `seed_demo_data.php` script was removed as superseded once this one covered the same ground plus far more; CSC101's original announcement/assignment/accessible-material content it created still exists in the database, just no longer has a script that would recreate it from scratch.)
 
 ## Replacing this with real data
 
