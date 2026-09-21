@@ -64,6 +64,8 @@ This runs under XAMPP for local development, but a real deployment for the whole
 
 MoodleCloud (Moodle's own managed hosting) is not suitable here, since it does not allow installing custom plugins like the ones in this repository.
 
+For a Docker-based deploy to a platform like Railway (git-push style, closer to what a JS developer expects from Vercel, with a free/cheap tier), see **[docs/deployment.md](docs/deployment.md)** - it includes a ready-to-use `Dockerfile` and step-by-step instructions.
+
 ## Original Moodle documentation
 
 - [User documentation](https://docs.moodle.org/)
