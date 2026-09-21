@@ -24,7 +24,8 @@ RUN mkdir -p /var/www/moodledata \
 # so the fix runs from its official /docker-entrypoint.d/ hook point instead, immediately
 # before Apache actually starts. See docker/entrypoint.d/05-fix-mpm.sh.
 COPY docker/entrypoint.d/05-fix-mpm.sh /docker-entrypoint.d/05-fix-mpm.sh
-RUN chmod +x /docker-entrypoint.d/05-fix-mpm.sh
+COPY docker/entrypoint.d/03-fix-moodledata-perms.sh /docker-entrypoint.d/03-fix-moodledata-perms.sh
+RUN chmod +x /docker-entrypoint.d/05-fix-mpm.sh /docker-entrypoint.d/03-fix-moodledata-perms.sh
 
 # NOTE: no Docker VOLUME instruction here - Railway (and most container platforms) rejects
 # it, since persistence is configured through their own volume system instead. On Railway:
