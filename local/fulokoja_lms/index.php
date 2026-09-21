@@ -103,6 +103,11 @@ echo $OUTPUT->header();
 
 <div class="fulokoja-dashboard">
     <div style="text-align:right;">
+        <?php if (has_capability('mod/accessiblematerial:viewreports', context_system::instance())) { ?>
+        <a class="btn btn-secondary" href="<?php echo (new moodle_url('/local/fulokoja_lms/reports/accessibility.php'))->out(); ?>">
+            <?php echo get_string('viewreport', 'local_fulokoja_lms'); ?>
+        </a>
+        <?php } ?>
         <a class="btn btn-secondary" href="<?php echo (new moodle_url('/local/fulokoja_lms/preferences.php'))->out(); ?>">
             <?php echo get_string('accessibilitysettings', 'local_fulokoja_lms'); ?>
         </a>
