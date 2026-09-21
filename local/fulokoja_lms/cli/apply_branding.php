@@ -9,6 +9,7 @@
 
 define('CLI_SCRIPT', true);
 require(__DIR__ . '/../../../config.php');
+require_once($CFG->libdir . '/clilib.php');
 
 global $DB, $CFG;
 
