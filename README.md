@@ -2,6 +2,8 @@
 
 A project on the implementation of LMS as an effective learning path for FUL and the Nigerian university sector as a whole.
 
+**Live demo**: https://moodle-production-ab27.up.railway.app (see `docs/presentation-guide.md` for login accounts).
+
 FUL LMS is the Integrated Learning Management System (ILMS) built and configured for Federal University Lokoja: a full, ready-to-deploy learning platform covering course delivery, assignments, grading, announcements and messaging, with accessibility built in from the ground up rather than bolted on afterward. It targets production use for the whole university, not a proof of concept.
 
 The platform is built on [Moodle](https://moodle.org), the world's most widely deployed open-source LMS, rather than written from zero - the same approach used by the large majority of university LMS deployments worldwide, because it means the platform inherits over 20 years of hardening on security, grading correctness, accessibility (Boost theme is WCAG-aligned out of the box), performance at scale, and course/assessment logic, instead of that all needing to be re-proven from scratch for a system that will hold real student data. What FUL gets that a stock Moodle install doesn't is everything in this repository layered on top of it: the accessibility compliance system, the FULokoja-specific dashboard and preferences, its branding/theming, its configured course structure, and its documentation (this README, the student/lecturer guides in `docs/`) - that whole package, not just the two plugin folders below, is the deliverable.

@@ -1,81 +1,46 @@
 # Deploying FUL LMS Online
 
-This repository now includes everything needed to run this exact codebase (Moodle core + `mod_accessiblematerial` + `local_fulokoja_lms`) on a real cloud host, not just on this laptop's XAMPP: `Dockerfile`, `config.docker.php` (reads database settings from environment variables instead of the hardcoded local ones), and `.dockerignore`.
+**Status: live.** The site is deployed and running at **https://moodle-production-ab27.up.railway.app** with the same data as the local instance (all 100 students, 30 lecturers, 13 courses, grades, etc. - migrated from the local database, not a fresh install). Login with any account from `docs/presentation-guide.md`.
 
-**Honesty about what's been verified**: the Docker build could not be tested in this development environment - it has no outbound internet access, so it can't reach Docker Hub to pull the base image. The Dockerfile is written correctly per standard Moodle/Docker conventions, but **you need to run the test in Step 0 yourself** before trusting it on a live host, so we're not debugging a broken build for the first time during a Railway deploy.
+This document is now a record of what it actually took to get there, including the real bugs hit and fixed along the way - useful both for maintaining this deployment and if you ever need to explain the process.
 
-## Step 0: test the build locally (do this first)
+## Architecture
 
-You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running. Then, from a terminal in this repository's root folder:
+- **Railway project**: "FUL LMS", containing two services:
+  - **`moodle`** - built from this repo's `Dockerfile`, deployed from GitHub (`Faith-Temitope/FuLLMS`, `main` branch). Auto-redeploys on every push to `main`.
+  - **`MySQL`** - Railway's managed MySQL, with a persistent volume for the database files.
+- **`moodle-volume`** - a persistent Railway Volume mounted at `/var/www/moodledata` on the `moodle` service, so uploaded course files survive redeploys.
+
+## Real problems hit and fixed (for future reference)
+
+1. **`docker VOLUME` instruction rejected.** Railway's build rejects a Docker-native `VOLUME` line in the Dockerfile ("use Railway Volumes" instead). Fixed by removing it from the Dockerfile and adding a Railway Volume separately (`railway volume add -m /var/www/moodledata`, or via the dashboard).
+2. **"More than one MPM loaded" - Apache crashed on every startup.** The base image (`moodlehq/moodle-php-apache`) ended up with both `mpm_event` and `mpm_prefork` enabled, which Apache refuses to start with. A build-time `a2dismod`/`a2enmod` didn't survive - something later in the base image's own startup re-enabled the conflicting module. Fixed properly via `docker/entrypoint.d/05-fix-mpm.sh`, which runs from the base image's own documented custom-hook directory (`/docker-entrypoint.d/`), immediately before Apache actually starts - nothing after it can undo the fix.
+3. **502 "Application failed to respond."** Railway's proxy needs to know which port the app listens on; Apache listens on 80 by default. Fixed with `railway domain update <domain> --port 80`.
+4. **500 error after adding the persistent volume.** Mounting a Railway Volume at `/var/www/moodledata` overrides the ownership set at build time (`chown www-data` in the Dockerfile only affects the image layer, not a volume mounted over it at container start) - it came up root-owned, which PHP (running as `www-data`) couldn't write to. Fixed via `docker/entrypoint.d/03-fix-moodledata-perms.sh`, which re-applies ownership on every container start, after the volume is mounted.
+5. **Local `railway up` uploads kept hanging** (Windows Defender likely scanning 55,000+ files in real time during indexing). Switched to connecting the service directly to the GitHub repo (`railway service source connect --repo ... --branch main`) instead - Railway then builds by pulling from GitHub server-to-server, with no dependency on the local machine's upload speed at all. This is also what makes future deploys automatic on `git push`.
+6. **Migrating the real data**, not a fresh install: exporting locally (`mysqldump`) and importing directly to Railway's MySQL over its public proxy repeatedly hung (the same kind of local network unreliability as the upload issue). Fixed by transferring the dump over `railway ssh` into the running `moodle` container instead, then running the import from *inside* the container against MySQL's fast private network address (`mysql.railway.internal`) - avoids the unreliable local connection entirely for the actual bulk transfer.
+
+## Redeploying
+
+Any push to `main` on GitHub triggers an automatic rebuild and redeploy - no manual steps needed. To force one without a code change: `railway redeploy -s moodle`.
+
+## Updating the live database
+
+The live database is now independent of your local one (they started identical, but will diverge as each gets used). To pull a fresh copy of local data onto the live site again:
 
 ```
-docker build -t fullms-test .
+"C:\xampp\mysql\bin\mysqldump.exe" -u root --routines --triggers --single-transaction moodle > dump.sql
+railway ssh -s moodle -- "cat > /tmp/dump.sql" < dump.sql
+railway ssh -s moodle -- 'mysql -h mysql.railway.internal -u root -p"$MOODLE_DB_PASS" railway < /tmp/dump.sql'
+railway ssh -s moodle -- "rm -f /tmp/dump.sql"
+railway ssh -s moodle -- "php admin/cli/purge_caches.php"
 ```
 
-- If it finishes with no errors, the image is good - move to Step 1.
-- If it fails, copy the exact error output back to me and I'll fix it before we touch Railway. Common things that could go wrong: a typo'd base image tag, a missing PHP extension the base image doesn't include (rare, since MoodleHQ's image is built specifically for this).
+## Checking on it
 
-Optional: run it locally to eyeball it before deploying anywhere:
 ```
-docker run -p 8080:80 -e MOODLE_DB_HOST=host.docker.internal -e MOODLE_WWWROOT=http://localhost:8080 fullms-test
+railway logs -s moodle              # runtime logs
+railway logs --build -s moodle      # build logs
+railway service list --json         # deployment status
+railway ssh -s moodle               # shell into the running container
 ```
-(This points it at your XAMPP MySQL - only useful as a smoke test that the container itself starts; you'd still need to visit `http://localhost:8080` and the DB user needs to allow connections from Docker's network.)
-
-## Step 1: create a Railway account and project
-
-[Railway](https://railway.app) is recommended: it deploys straight from a GitHub repo's Dockerfile, includes managed MySQL, and has a free trial tier. This step needs your own account/payment details, which I can't create on your behalf.
-
-1. Go to railway.app and sign up (signing in with your GitHub account is easiest, since it can then see your `FuLLMS` repo directly).
-2. Click **New Project > Deploy from GitHub repo**, select `Faith-Temitope/FuLLMS`.
-3. Railway will detect the `Dockerfile` at the repo root automatically and build from it.
-
-## Step 2: add a managed database
-
-1. In the same Railway project, click **+ New > Database > Add MySQL**.
-2. Railway provisions it and shows a set of connection variables (something like `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE` - the exact names are shown in that service's **Variables** tab; use whatever it actually shows you, the names above are Railway's usual convention but confirm on screen).
-
-## Step 3: configure the Moodle service's environment variables
-
-On the **Moodle service** (not the database service), go to its **Variables** tab and add:
-
-| Variable | Value |
-|---|---|
-| `MOODLE_DB_HOST` | Reference the MySQL service's host variable (Railway lets you type `${{MySQL.MYSQLHOST}}` to pull it in live) |
-| `MOODLE_DB_NAME` | `${{MySQL.MYSQLDATABASE}}` |
-| `MOODLE_DB_USER` | `${{MySQL.MYSQLUSER}}` |
-| `MOODLE_DB_PASS` | `${{MySQL.MYSQLPASSWORD}}` |
-| `MOODLE_DB_PORT` | `${{MySQL.MYSQLPORT}}` |
-| `MOODLE_WWWROOT` | set after Step 4 (see below) |
-
-## Step 4: get a public URL and finish MOODLE_WWWROOT
-
-1. On the Moodle service, go to **Settings > Networking > Generate Domain**. Railway gives you a URL like `fullms-production.up.railway.app`.
-2. Go back to Variables and set `MOODLE_WWWROOT` to `https://fullms-production.up.railway.app` (your actual generated domain, with `https://`).
-3. Redeploy the service (Railway usually does this automatically when variables change).
-
-## Step 5: add persistent storage for uploaded files
-
-1. On the Moodle service, go to **Settings > Volumes > New Volume**.
-2. Mount path: `/var/www/moodledata`.
-3. Without this, every redeploy wipes uploaded course files.
-
-## Step 6: install the database schema
-
-The Railway MySQL database starts empty - Moodle needs its schema installed once. Easiest path: open the Moodle service's Railway shell/console (or use `railway run`) and run:
-```
-php admin/cli/install_database.php --agree-license --fullname="FUL LMS" --shortname="FULLMS" --adminuser=faithtemitope --adminpass="<choose a real password>" --adminemail=faithtemitope068@gmail.com
-```
-Then, to get the same presentation data (100 students, 13 courses, etc.) on the live site:
-```
-php local/fulokoja_lms/cli/seed_full_semester.php
-```
-
-**Alternative**: instead of installing fresh, migrate your actual local data (preserves everything exactly as tested) by exporting your local database and importing it into Railway's MySQL:
-```
-"C:\xampp\mysql\bin\mysqldump.exe" -u root moodle > fullms_export.sql
-```
-then import `fullms_export.sql` into the Railway MySQL database using the connection details from Step 2 (Railway's dashboard has a "Connect" button showing the exact `mysql` command to use, since its databases are reachable from outside Railway too).
-
-## Step 7: verify
-
-Visit your Railway URL, log in with an account from `docs/presentation-guide.md`, and confirm a course loads. Report back any errors - Railway's **Deployments > View Logs** shows exactly what went wrong if something doesn't work, and that log output is what I'd need to fix it.
