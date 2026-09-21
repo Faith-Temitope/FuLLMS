@@ -2,6 +2,7 @@
 namespace local_fulokoja_lms;
 
 use core\hook\output\before_html_attributes;
+use core\hook\output\before_standard_head_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
 
 defined('MOODLE_INTERNAL') || die();
@@ -50,5 +51,37 @@ class hook_callbacks {
                 ['class' => 'fulokoja-a11y-quicklink']
             )
         );
+    }
+
+    /**
+     * Adds the PWA manifest, theme colour, and iOS home-screen tags, and registers the
+     * service worker, so FUL LMS can be installed as an app on phones and desktops.
+     */
+    public static function before_standard_head_html_generation(before_standard_head_html_generation $hook): void {
+        global $CFG;
+
+        $wwwroot = rtrim($CFG->wwwroot, '/');
+        $scope = rtrim(parse_url($wwwroot, PHP_URL_PATH) ?: '', '/') . '/';
+
+        $html = '';
+        $html .= \html_writer::empty_tag('link', [
+            'rel' => 'manifest',
+            'href' => $wwwroot . '/local/fulokoja_lms/pwa/manifest.php',
+        ]);
+        $html .= \html_writer::empty_tag('meta', ['name' => 'theme-color', 'content' => '#01351e']);
+        $html .= \html_writer::empty_tag('link', [
+            'rel' => 'apple-touch-icon',
+            'href' => $wwwroot . '/local/fulokoja_lms/pwa/apple-touch-icon.png',
+        ]);
+        $html .= \html_writer::empty_tag('meta', ['name' => 'apple-mobile-web-app-capable', 'content' => 'yes']);
+        $html .= \html_writer::empty_tag('meta', ['name' => 'apple-mobile-web-app-title', 'content' => 'FUL LMS']);
+        $html .= \html_writer::tag('script', sprintf(
+            "if ('serviceWorker' in navigator) { window.addEventListener('load', function() {" .
+            " navigator.serviceWorker.register('%s/sw.js', {scope: '%s'}).catch(function(){}); }); }",
+            $wwwroot,
+            $scope
+        ));
+
+        $hook->add_html($html);
     }
 }
