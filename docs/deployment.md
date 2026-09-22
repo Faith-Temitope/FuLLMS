@@ -1,4 +1,7 @@
-# Deploying FUL LMS Online
+---
+title: "Deployment"
+description: "The live Railway architecture, every bug hit getting there, and how to redeploy or update the database"
+---
 
 **Status: live.** The site is deployed and running at **https://fullms-production.up.railway.app** with the same data as the local instance (all 100 students, 30 lecturers, 13 courses, grades, etc. - migrated from the local database, not a fresh install). Login with any account from `docs/presentation-guide.md`.
 

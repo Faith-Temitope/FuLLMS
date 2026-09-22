@@ -1,4 +1,7 @@
-# Student Guide
+---
+title: "Student Guide"
+description: "How to log in, find course material, submit assignments, and use accessibility settings"
+---
 
 This guide explains how to use the FUL Integrated Learning Management System (ILMS) as a student.
 

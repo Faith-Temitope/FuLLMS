@@ -1,4 +1,7 @@
-# Demo / Presentation Data
+---
+title: "Demo Accounts"
+description: "The 100 students, 30 lecturers, and 13 courses seeded for presentations, and how to replace them with real data"
+---
 
 This is placeholder data for testing and presentations, seeded on top of the real platform - **not FUL's real student/staff records.** Replace it with FUL's actual course catalogue, department structure, and accounts once available. Nothing here is permanent: courses, categories, and accounts can be renamed, added to, or deleted at any time through Site administration, exactly like any other Moodle data.
 

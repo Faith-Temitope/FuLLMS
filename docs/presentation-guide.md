@@ -1,4 +1,7 @@
-# Presentation Guide
+---
+title: "Presentation Guide"
+description: "Login accounts, SQL queries, cron, the tech stack, and likely panel questions - everything needed to present"
+---
 
 Everything you need to run the system, answer questions about it, and query it live during your presentation (24 & 28 September). Written so you can present from this document without needing to ask me anything in the room.
 

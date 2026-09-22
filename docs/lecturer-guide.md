@@ -1,4 +1,7 @@
-# Lecturer Guide
+---
+title: "Lecturer Guide"
+description: "How to upload accessible course material, manage assignments and grading, and post announcements"
+---
 
 This guide explains how to use the FUL Integrated Learning Management System (ILMS) as a lecturer.
 
