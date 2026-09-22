@@ -5466,7 +5466,13 @@ function get_mailer($action='get') {
 
         $counter = 1;
 
-        if ($CFG->smtphosts == 'qmail') {
+        if (!empty($CFG->brevo_api_key)) {
+            // Send via Brevo's HTTP API (port 443) instead of SMTP - some hosts (e.g. Railway)
+            // block outbound SMTP ports at the network level but allow outbound HTTPS.
+            // See moodle_phpmailer::brevoSend().
+            $mailer->Mailer = 'brevo';
+
+        } else if ($CFG->smtphosts == 'qmail') {
             // Use Qmail system.
             $mailer->isQmail();
 

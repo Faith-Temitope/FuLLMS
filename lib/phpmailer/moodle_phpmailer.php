@@ -147,6 +147,94 @@ class moodle_phpmailer extends \PHPMailer\PHPMailer\PHPMailer {
     }
 
     /**
+     * Sends via Brevo's transactional email HTTP API instead of SMTP.
+     *
+     * Some hosts (e.g. Railway) block outbound SMTP ports at the network level but allow
+     * outbound HTTPS. When $CFG->brevo_api_key is set, get_mailer() sets Mailer = 'brevo',
+     * and PHPMailer::postSend()'s own dispatch (default case: calls "{$this->Mailer}Send"
+     * when such a method exists) calls this instead of smtpSend()/mailSend().
+     *
+     * @param string $header unused - Brevo's API takes structured fields, not raw MIME.
+     * @param string $body unused - see above.
+     * @return bool
+     */
+    public function brevoSend($header, $body) {
+        global $CFG;
+
+        $to = [];
+        foreach ($this->getToAddresses() as $addr) {
+            $to[] = ['email' => $addr[0], 'name' => $addr[1] !== '' ? $addr[1] : $addr[0]];
+        }
+        if (empty($to)) {
+            $this->setError('Brevo API: no recipient address set');
+            return false;
+        }
+
+        $payload = [
+            'sender' => ['email' => $this->From, 'name' => $this->FromName !== '' ? $this->FromName : $this->From],
+            'to' => $to,
+            'subject' => $this->Subject,
+        ];
+
+        if (strtolower($this->ContentType) === 'text/html') {
+            $payload['htmlContent'] = $this->Body;
+            if ($this->AltBody !== '') {
+                $payload['textContent'] = $this->AltBody;
+            }
+        } else {
+            $payload['textContent'] = $this->Body;
+        }
+
+        $replytos = $this->getReplyToAddresses();
+        if (!empty($replytos)) {
+            $reply = reset($replytos);
+            $payload['replyTo'] = ['email' => $reply[0]];
+        }
+
+        $attachments = [];
+        foreach ($this->getAttachments() as $att) {
+            $content = !empty($att[5]) ? $att[0] : @file_get_contents($att[0]);
+            if ($content === false) {
+                continue;
+            }
+            $attachments[] = ['content' => base64_encode($content), 'name' => $att[2]];
+        }
+        if (!empty($attachments)) {
+            $payload['attachment'] = $attachments;
+        }
+
+        $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
+                'api-key: ' . $CFG->brevo_api_key,
+                'Content-Type: application/json',
+                'Accept: application/json',
+            ],
+            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_SSL_VERIFYPEER => true,
+        ]);
+        $response = curl_exec($ch);
+        $curlerrno = curl_errno($ch);
+        $curlerror = curl_error($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($curlerrno) {
+            $this->setError('Brevo API connection error: ' . $curlerror);
+            return false;
+        }
+        if ($status < 200 || $status >= 300) {
+            $this->setError('Brevo API error (HTTP ' . $status . '): ' . $response);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Config the PHPMailer to use OAUTH if necessary.
      */
     private function process_oauth(): void {
