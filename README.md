@@ -2,7 +2,7 @@
 
 A project on the implementation of LMS as an effective learning path for FUL and the Nigerian university sector as a whole.
 
-**Live demo**: https://moodle-production-ab27.up.railway.app (see `docs/presentation-guide.md` for login accounts).
+**Live demo**: https://fullms-production.up.railway.app (see `docs/presentation-guide.md` for login accounts).
 
 FUL LMS is the Integrated Learning Management System (ILMS) built and configured for Federal University Lokoja: a full, ready-to-deploy learning platform covering course delivery, assignments, grading, announcements and messaging, with accessibility built in from the ground up rather than bolted on afterward. It targets production use for the whole university, not a proof of concept.
 
