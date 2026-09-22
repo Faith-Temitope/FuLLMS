@@ -57,8 +57,23 @@ function core_admin_pluginfile($course, $cm, $context, $filearea, $args, $forced
 
     if (in_array($filearea, ['logo', 'logocompact', 'favicon'])) {
         $size = array_shift($args); // The path hides the size.
-        $itemid = clean_param(array_shift($args), PARAM_INT);
-        $filename = clean_param(array_shift($args), PARAM_FILE);
+        // get_logo_url()/get_compact_logo_url()/favicon() build this URL as
+        // .../<size>/<themerev><filename> with NO separator between the theme revision and the
+        // filename (moodle_url::make_pluginfile_url() only inserts one when the caller's
+        // $pathname argument already ends in '/', which these three callers don't do - see
+        // lib/classes/output/renderer_base.php and lib/classes/url.php). For any theme
+        // revision that looks like a large timestamp (this project's does), the two remaining
+        // args collapse into one path segment, so a plain array_shift()/array_shift() leaves
+        // $filename empty and every custom logo/favicon 404s. Split the leading digits (the
+        // revision) from whatever follows (the actual filename) instead.
+        $revisionandfilename = array_shift($args);
+        if (preg_match('/^(\d+)(.+)$/', (string) $revisionandfilename, $matches)) {
+            $itemid = (int) $matches[1];
+            $filename = clean_param($matches[2], PARAM_FILE);
+        } else {
+            $itemid = clean_param($revisionandfilename, PARAM_INT);
+            $filename = clean_param(array_shift($args), PARAM_FILE);
+        }
         $themerev = theme_get_revision();
         if ($themerev <= 0) {
             // Normalise to 0 as -1 doesn't place well with paths.
