@@ -1,0 +1,51 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "FUL LMS",
+  "colors": {
+    "primary": "#4c638f",
+    "light": "#4c638f",
+    "dark": "#01351e"
+  },
+  "favicon": "/local/fulokoja_lms/pix/ful-crest.png",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["README"]
+          },
+          {
+            "group": "Using the Platform",
+            "pages": [
+              "docs/student-guide",
+              "docs/lecturer-guide",
+              "docs/presentation-guide"
+            ]
+          },
+          {
+            "group": "Operations",
+            "pages": [
+              "docs/deployment",
+              "docs/demo-accounts"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/Faith-Temitope/FuLLMS"
+      },
+      {
+        "label": "Live Site",
+        "href": "https://fullms-production.up.railway.app"
+      }
+    ]
+  }
+}

@@ -4,15 +4,21 @@ Everything you need to run the system, answer questions about it, and query it l
 
 ## 1. How to run it
 
-Everything lives on this laptop under XAMPP (Apache + MariaDB + PHP).
+**For the actual presentation, use the live site - nothing to start up:**
 
-**Before presenting:**
+**https://fullms-production.up.railway.app**
+
+It runs on Railway's own servers, independently of this laptop - no need to open XAMPP, Docker, or anything else. Just open that URL in any browser (on any device, including your phone) and log in with an account from section 1a below.
+
+### Local copy (for your own development/testing only)
+
+A separate local copy also exists on this laptop under XAMPP, with its own separate data - useful for testing changes before they go live, not needed for presenting.
+
 1. Open **XAMPP Control Panel** (search it in the Start menu).
-2. Click **Start** next to **Apache** and next to **MySQL**. Both rows should turn green.
+2. Click **Start** next to **Apache** and next to **MySQL**.
 3. Open a browser to `http://localhost/moodle`.
-4. Log in with your admin account (or any of the demo accounts in `docs/demo-accounts.md`).
 
-That's the entire startup procedure. If the page won't load, Apache or MySQL isn't running - check the XAMPP Control Panel first.
+Changes made locally don't affect the live site until you `git push` and the site auto-redeploys (see `docs/deployment.md`).
 
 **A scheduled task now runs Moodle's background jobs (cron) automatically every minute** (see section 5) as long as this Windows account is logged in. You don't need to do anything for it.
 
@@ -116,6 +122,22 @@ Every table is prefixed `mdl_` (e.g. the "users" table is `mdl_user`, "courses" 
 5. To enrol them in a course: open the course → **Participants** (left menu) → **Enrol users** → search their name → pick a role (Student/Teacher) → **Enrol**.
 
 That's the entire manual flow. For bulk creation (which is how the 100 students/30 lecturers were actually made), see section 8.
+
+## 3a. Getting the mobile app
+
+Two ways, in order of how much effort they take:
+
+**1. Install it as an app right now, no app store (recommended for the demo):**
+- On Android: open **https://fullms-production.up.railway.app** in Chrome, tap the **⋮** menu, tap **"Add to Home Screen"** / **"Install app"**.
+- On iPhone: open the same URL in Safari, tap the **Share** icon, tap **"Add to Home Screen"**.
+- It installs with the FUL crest and "FUL LMS" as its name, opens full-screen like a native app, no Play Store/App Store visit needed.
+
+**2. Official Moodle app (full native app, from the app store):**
+1. Install **"Moodle"** from the Google Play Store or Apple App Store (the official app, published by Moodle Pty Ltd - free).
+2. Open it, tap **"I already have an account"** (or similar), and when it asks for a site URL, enter: `https://fullms-production.up.railway.app`
+3. Log in with any account from section 1a.
+
+Both connect to the exact same live site and data - option 1 is faster to show live in a presentation since it needs no app store visit.
 
 ## 4. How the forum and communication features work
 
